@@ -25,9 +25,8 @@ def MSE(W, b, x, y, reg):
     # Your implementation here
     N =len(y) #Length of the output training set (3500 in this case ) 
     Total = 0
-    
-    for i in xrange(N):
-        Total += (1/(2*N)) * np.square((y[:,i] - np.transpose(W) * X[:,i] + b))
+    for i in range(N):
+        Total += (1/(2*N)) * np.square((y[:,i] - np.transpose(W) * x[:,i] + b))
     Total += (reg/2) * np.sum(W) 
     return Total 
         
@@ -52,6 +51,7 @@ def MSE(W, b, x, y, reg):
 trainData,validData,testData,trainTarget,validTarget,testTarget = loadData()
  
 W = np.random.rand(1,len(trainData))
+
 
 MSE(W,1,testData,testTarget,0.1)
 
