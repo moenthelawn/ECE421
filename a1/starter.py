@@ -31,7 +31,7 @@ def MSE(W, b, x, y, reg):
     Total += (reg/2) * np.sum(W) 
     return Total 
         
-
+#This is a comment
 # =============================================================================
 # def gradMSE(W, b, x, y, reg):
 #     # Your implementation here
