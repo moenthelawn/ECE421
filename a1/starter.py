@@ -23,14 +23,18 @@ def loadData():
 
 def MSE(W, b, x, y, reg):
     # Your implementation here
-    N =len(y) #Length of the output training set (3500 in this case ) 
+        
+    N = len(y)
     Total = 0
     for i in range(N):
-        Total += (1/(2*N)) * np.square((y[:,i] - np.transpose(W) * x[:,i] + b))
+        X_sliced = x[i,:,:]
+        X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
+        
+        Total += (1/(2*N)) * np.square(((np.matmul((W),np.transpose(X_sliced)) + b)-y[i]))
+
     Total += (reg/2) * np.sum(W) 
     return Total 
         
-#This is a comment
 # =============================================================================
 # def gradMSE(W, b, x, y, reg):
 #     # Your implementation here
@@ -50,8 +54,8 @@ def MSE(W, b, x, y, reg):
     
 trainData,validData,testData,trainTarget,validTarget,testTarget = loadData()
  
-W = np.random.rand(1,len(trainData))
-
+W = testData[0,:,:]
+W = np.reshape(W, (1,np.product(W.shape)))
 
 MSE(W,1,testData,testTarget,0.1)
 
