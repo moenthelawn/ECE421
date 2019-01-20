@@ -44,7 +44,7 @@ def gradMSE(W, b, x, y, reg):
     for i in range(N): 
         X_sliced = x[i,:,:]
         X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
-        mse_gradient = (((np.matmul((W),np.transpose(X_sliced)) * X_sliced) + b)-y[i])
+        mse_gradient += (((np.matmul((W),np.transpose(X_sliced)) * X_sliced) + b)-y[i])
     
     mse_gradient *= 1/N 
     mse_gradient = reg * np.matmul(W, np.transpose(W))
