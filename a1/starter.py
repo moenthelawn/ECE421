@@ -39,12 +39,12 @@ def MSE(W, b, x, y, reg):
     
 def gradMSE(W, b, x, y, reg):
     N = len(y)
-    mse_gradient = 0 
+    mse_gradient = np.zeros(np.shape(W))
     #You wanna sum the inside and then multiply 1/N after the loop exits 
     for i in range(N): 
         X_sliced = x[i,:,:]
         X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
-        mse_gradient += (((np.matmul((W),np.transpose(X_sliced))) + b)-y[i]) * np.transpose(X_sliced)
+        mse_gradient += np.dot((((np.matmul((W), np.transpose(X_sliced))) + b)-y[i]),X_sliced) 
     
     mse_gradient *= 1/N 
     mse_gradient += reg * np.matmul(W, np.transpose(W))
