@@ -26,12 +26,13 @@ def MSE(W, b, x, y, reg):
         
     N = len(y)
     Total = 0
+    i = 0
     #You wanna sum the inside and then multiply 1/2N after the loop exits 
     for i in range(N):
         X_sliced = x[i,:,:]
         X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
         
-        Total += np.square(((np.matmul((W),np.transpose(X_sliced)) + b)-y[i]))
+        Total += np.square(((np.matmul((W),np.transpose(X_sliced)) + b - y[i])))
 
     Total *= (1/(2*N)) 
     Total += (reg/2) * np.matmul(W, np.transpose(W))
@@ -55,12 +56,31 @@ def gradMSE(W, b, x, y, reg):
     mse_gradient_biases += reg * W
     
     return mse_gradient_weights,mse_gradient_biases
-   # Your implementation here
+   
+def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
+    
+   
+    error_history = []
+    
+    for i in range(iterations):
+        mse = MSE(W, b, trainingData, trainingLabels,reg)
+        error_history.append(mse) 
+        if mse <= EPS: 
+            break 
+        mse_gradient_weights, mse_gradient_biases = gradMSE(W,b,trainingData, trainingLabels,reg)
+        W += mse_gradient_weights*alpha 
+        b += mse_gradient_biases*alpha
+    plt.plot(error_history)
+    plt.show()
+        
+    return W,b
     
 # =============================================================================
 # def crossEntropyLoss(W, b, x, y, reg):
 #     # Your implementation here
 # 
+# def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
+    #Your Implementaiton here 
 # def gradCE(W, b, x, y, reg):
 #     # Your implementation here
 # 
@@ -75,8 +95,12 @@ trainData,validData,testData,trainTarget,validTarget,testTarget = loadData()
  
 W = testData[0,:,:]
 W = np.reshape(W, (1,np.product(W.shape)))
+b = np.zeros(np.shape(W))
 
+#MSE(W,1,testData,testTarget,0.1)
+#mse_gradient_weights, mse_gradient_biases = gradMSE(W,1,testData,testTarget,0.1)
 
-MSE(W,1,testData,testTarget,0.1)
-gradMSE(W,1,testData,testTarget,0.1)
+grad_descent(W, b, trainData, trainTarget, 0.01, 5000, 0.1, 0.000001) 
 
+#plt.scatter(np.matmul(np.transpose(W),testData)) + b, testTarget)
+#plt.show()
