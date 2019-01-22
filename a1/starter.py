@@ -41,7 +41,9 @@ def MSE(W, b, x, y, reg):
 def gradMSE(W, b, x, y, reg):
     N = len(y)
     mse_gradient_weights = np.zeros(np.shape(W)) #Matrix to hold the gradients wrt weights 
-    mse_gradient_biases = np.zeros(np.shape(W)) #Matrix to hold the gradients wrt biases
+    mse_gradient_biases = 0
+    
+    
     #You wanna sum the inside and then multiply 1/N after the loop exits 
     for i in range(N): 
         X_sliced = x[i,:,:]
@@ -53,7 +55,7 @@ def gradMSE(W, b, x, y, reg):
     mse_gradient_weights += reg * W
     
     mse_gradient_biases *= 1/N
-    mse_gradient_biases += reg * W
+    #mse_gradient_biases += reg * W
     
     return mse_gradient_weights,mse_gradient_biases
    
@@ -100,7 +102,7 @@ b = np.zeros(np.shape(W))
 #MSE(W,1,testData,testTarget,0.1)
 #mse_gradient_weights, mse_gradient_biases = gradMSE(W,1,testData,testTarget,0.1)
 
-grad_descent(W, b, trainData, trainTarget, 0.01, 5000, 0.1, 0.000001) 
+grad_descent(W, 1, trainData, trainTarget, 0.01, 5000, 0.1, 0.000001) 
 
 #plt.scatter(np.matmul(np.transpose(W),testData)) + b, testTarget)
 #plt.show()
