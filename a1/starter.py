@@ -60,7 +60,7 @@ def gradMSE(W, b, x, y, reg):
     return mse_gradient_weights,mse_gradient_biases
    
 def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
-    
+    #Added the ability to loop through and 
    
     j = 0 
     for _alpha in alpha:
@@ -76,8 +76,9 @@ def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS
             b -= mse_gradient_biases*_alpha
             
         f = plt.figure(j)
-        plt.plot(error_history)
-        plt.title (_alpha)
+        string_plot = "Learning Rate of " + str(_alpha) + " with error" + str(mse[-1])
+        plt.plot(error_history) 
+        plt.title (string_plot)
         f.show()
         
         print(mse[-1])
