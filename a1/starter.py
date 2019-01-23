@@ -66,12 +66,13 @@ def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS
     
     for i in range(iterations):
         mse = MSE(W, b, trainingData, trainingLabels,reg)
-        error_history.append(mse) 
+        error_history.append(mse[0]) 
         if mse <= EPS: 
             break 
         mse_gradient_weights, mse_gradient_biases = gradMSE(W,b,trainingData, trainingLabels,reg)
-        W += mse_gradient_weights*alpha 
-        b += mse_gradient_biases*alpha
+        W -= mse_gradient_weights*alpha 
+        
+        b -= mse_gradient_biases*alpha
     plt.plot(error_history)
     plt.show()
         
@@ -102,7 +103,7 @@ b = np.zeros(np.shape(W))
 #MSE(W,1,testData,testTarget,0.1)
 #mse_gradient_weights, mse_gradient_biases = gradMSE(W,1,testData,testTarget,0.1)
 
-grad_descent(W, 1, trainData, trainTarget, 0.01, 5000, 0.1, 0.000001) 
+grad_descent(W, 1, trainData, trainTarget, .01, 100, 0, 0.000001) 
 
 #plt.scatter(np.matmul(np.transpose(W),testData)) + b, testTarget)
 #plt.show()
