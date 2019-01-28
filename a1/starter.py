@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-
+import scipy.misc
 def loadData():
     with np.load('notMNIST.npz') as data :
         Data, Target = data ['images'], data['labels']
@@ -32,25 +32,31 @@ def MSE(W, b, x, y, reg):
         X_sliced = x[i,:,:]
         X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
         
-        Total += np.square(((np.matmul((W),np.transpose(X_sliced)) + b - y[i])))
+        Total += np.square(((np.matmul((W),np.transpose(X_sliced)) + b[0][1])) - y[i])
 
     Total *= (1/(2*N)) 
     Total += (reg/2) * np.matmul(W, np.transpose(W))
     return Total 
+
+def meanSquareError(W,x,y): 
+    #This function returns the minimized weights for the mean square 
+    x_t = np.transpose(x)
+    x_dagger = np.matmul((np.invert(np.matmul(x_t,x))),x_t)
+    return np.matmul(x_dagger,w)
     
 def gradMSE(W, b, x, y, reg):
     N = len(y)
-    mse_gradient_weights = np.zeros(np.shape(W)) #Matrix to hold the gradients wrt weights 
-    mse_gradient_biases = 0
-    
+    mse_gradient_weights = np.random.normal(0,1,np.shape(W)) #Matrix to hold the gradients wrt weights 
+    mse_gradient_biases = np.random.normal(0,1,np.shape(W))#Declare a random set of matrix values for the biases 
     
     #You wanna sum the inside and then multiply 1/N after the loop exits 
     for i in range(N): 
+        
         X_sliced = x[i,:,:]
         X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
-        mse_gradient_weights += np.dot((((np.matmul((W), np.transpose(X_sliced))) + b)-y[i]),X_sliced) 
-        mse_gradient_biases += (((np.matmul((W), np.transpose(X_sliced))) + b)-y[i]) 
-   
+        mse_gradient_weights += np.dot((((np.matmul((W), np.transpose(X_sliced))) + b[0][1])-y[i]),X_sliced) 
+        mse_gradient_biases += (((np.matmul((W), np.transpose(X_sliced))) + b[0][1])-y[i]) 
+        
     mse_gradient_weights *= 1/N 
     mse_gradient_weights += reg * W
     
@@ -58,33 +64,70 @@ def gradMSE(W, b, x, y, reg):
     #mse_gradient_biases += reg * W
     
     return mse_gradient_weights,mse_gradient_biases
+def getSign(number): 
+    #This function will return the sign of a number 
+    if number >= 0: 
+        return 1 
+    else: 
+        return 0
+    
+    
+def accuracy(x,b,y): 
+    #This function will return the correct accuracy of a classifier 
+    N = len(y)
+    correctPrediction = 0 
+    for i in range(N): 
+        X_sliced = x[i,:,:]
+        X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
+        y_hat = getSign(np.matmul(W,np.transpose(X_sliced)) + b[0][1])
+        
+        y_expected = y[i]   
+        
+        if y_hat == y_expected: 
+            correctPrediction += 1
+            
+    accuracy = 100 * (correctPrediction / N)
+    print("The accuracy of the data set is " + str(accuracy))
+        
    
 def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
     #Added the ability to loop through and 
    
     j = 0 
-    for _alpha in alpha:
+    for _reg in reg:
         error_history = []
         for i in range(iterations):
-            mse = MSE(W, b, trainingData, trainingLabels,reg)
+            mse = MSE(W,b,trainingData,trainingLabels,_reg)
             error_history.append(mse[0]) 
             if mse <= EPS: 
                 break 
-            mse_gradient_weights, mse_gradient_biases = gradMSE(W,b,trainingData, trainingLabels,reg)
-            W -= mse_gradient_weights*_alpha 
+            mse_gradient_weights, mse_gradient_biases = gradMSE(W,b,trainingData, trainingLabels,_reg)
             
-            b -= mse_gradient_biases*_alpha
+            W -= mse_gradient_weights*alpha 
+            b -= mse_gradient_biases*alpha
             
+           
+        
         f = plt.figure(j)
-        string_plot = "Learning Rate of " + str(_alpha) + " with error" + str(mse[-1])
+        accuracy(trainingData,b,trainingLabels)
+        string_plot = "Regularization Rate of " + str(_reg) + " with error " + str(mse[-1])
         plt.plot(error_history) 
+        plt.xlabel('Iterations')
+        plt.ylabel('Error')
         plt.title (string_plot)
         f.show()
+        plt.savefig(str(j))
         
         print(mse[-1])
         j += 1
     return W,b
+
+#def crossEntropyLoss(W, b, x, y, reg):
+#Your implementation
     
+#def gradCE(W, b, x, y, reg):
+#Your implementation
+
 # =============================================================================
 # def crossEntropyLoss(W, b, x, y, reg):
 #     # Your implementation here
@@ -105,12 +148,12 @@ trainData,validData,testData,trainTarget,validTarget,testTarget = loadData()
  
 W = testData[0,:,:]
 W = np.reshape(W, (1,np.product(W.shape)))
-b = np.zeros(np.shape(W))
+b = np.ones(np.shape(W))
 
 #MSE(W,1,testData,testTarget,0.1)
 #mse_gradient_weights, mse_gradient_biases = gradMSE(W,1,testData,testTarget,0.1)
 
-grad_descent(W, 1, trainData, trainTarget, {0.005,0.001,0.0001}, 100, 0, 0.000001) 
+grad_descent(W, b, validData, validTarget, 0.005, 5000, {0.001,0.1,0.5}, 0.000001) 
 
 #plt.scatter(np.matmul(np.transpose(W),testData)) + b, testTarget)
 #plt.show()
