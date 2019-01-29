@@ -131,9 +131,7 @@ def crossEntropyLoss(W, b, x, y, reg):
         X_sliced = x[i,:,:]
         X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
         sigmoid_value = sigmoid(W, X_sliced, b[0][1])
-        #The next line commented out is where it breaks. Try debugigng and you'll see that the output of the 
-        #sigmoid function is always 1 lmao. i'm sad
-        #total += (-1 * y[i] * np.log(sigmoid_value)) - ((1 - y[i])*(np.log(1 - sigmoid_value)))
+        total += (-1 * y[i] * np.log(sigmoid_value)) - ((1 - y[i])*(np.log(1 - sigmoid_value)))
         total = total * (1/N)
     
     total += (reg/2) * np.matmul(W, np.transpose(W))
@@ -141,8 +139,23 @@ def crossEntropyLoss(W, b, x, y, reg):
     print(total)
     return total 
     
-#def gradCE(W, b, x, y, reg):
-    
+def gradCE(W, b, x, y, reg):
+    grad_ce_weights = 0 
+    grad_ce_biases = 0
+    N = len(y)
+    #Note the gradient with respect to the weights is exactly the same as the 
+    #gradient wrt to W of the MSE. 
+    for i in range(N):  
+        X_sliced = x[i,:,:]
+        X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
+        sigmoid_value = sigmoid(W, X_sliced, b[0][1])
+        grad_ce_weights += np.dot((sigmoid_value - y[i]), X_sliced)
+        grad_ce_biases += sigmoid_value - y[i]
+        
+    grad_ce_weights*= 1/N
+    grad_ce_weights += reg * W 
+    grad_ce_biases *= 1/N
+    return grad_ce_weights, grad_ce_biases  
 #Helper function to calculate the value of the sigmoid function 1/(1 + e ^ Wtransposex + b)^-1
 # W is a matrix, x and b are single values
 def sigmoid(W, x, b):
@@ -171,12 +184,12 @@ def sigmoid(W, x, b):
     
 trainData,validData,testData,trainTarget,validTarget,testTarget = loadData()
  
-W = np.random.rand(784,1)
+W = np.zeros((784,1))
 W = np.reshape(W, (1,np.product(W.shape)))
 b = np.ones(np.shape(W))
 
 
-crossEntropyLoss(W,b,trainData, trainTarget, 0)
+gradCE(W,b,trainData, trainTarget, 0)
 #MSE(W,b,testData,testTarget,0.1)
 #mse_gradient_weights, mse_gradient_biases = gradMSE(W,1,testData,testTarget,0.1)
 
