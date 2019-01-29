@@ -21,6 +21,7 @@ def loadData():
         testData, testTarget = Data[3600:], Target[3600:]
     return trainData, validData, testData, trainTarget, validTarget, testTarget
 
+#============================Question 1 : Linear Regression====================
 def MSE(W, b, x, y, reg):
     # Your implementation here
         
@@ -42,7 +43,7 @@ def meanSquareError(W,x,y):
     #This function returns the minimized weights for the mean square 
     x_t = np.transpose(x)
     x_dagger = np.matmul((np.invert(np.matmul(x_t,x))),x_t)
-    return np.matmul(x_dagger,w)
+    return np.matmul(x_dagger,W)
     
 def gradMSE(W, b, x, y, reg):
     N = len(y)
@@ -122,11 +123,35 @@ def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS
         j += 1
     return W,b
 
-#def crossEntropyLoss(W, b, x, y, reg):
-#Your implementation
+#==================Question 2: Logistic Regression=============================
+def crossEntropyLoss(W, b, x, y, reg):
+    total = 0
+    N = len(y)
+    for i in range(N):  
+        X_sliced = x[i,:,:]
+        X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
+        sigmoid_value = sigmoid(W, X_sliced, b[0][1])
+        #The next line commented out is where it breaks. Try debugigng and you'll see that the output of the 
+        #sigmoid function is always 1 lmao. i'm sad
+        #total += (-1 * y[i] * np.log(sigmoid_value)) - ((1 - y[i])*(np.log(1 - sigmoid_value)))
+        total = total * (1/N)
+    
+    total += (reg/2) * np.matmul(W, np.transpose(W))
+    
+    print(total)
+    return total 
     
 #def gradCE(W, b, x, y, reg):
-#Your implementation
+    
+#Helper function to calculate the value of the sigmoid function 1/(1 + e ^ Wtransposex + b)^-1
+# W is a matrix, x and b are single values
+def sigmoid(W, x, b):
+    sigmoid_output = 0 
+    raised_term = np.matmul(W, np.transpose(x)) + b
+    exponential_term = np.exp(-raised_term) 
+    sigmoid_output = 1 / (1 + exponential_term)
+    
+    return sigmoid_output 
 
 # =============================================================================
 # def crossEntropyLoss(W, b, x, y, reg):
@@ -146,14 +171,16 @@ def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS
     
 trainData,validData,testData,trainTarget,validTarget,testTarget = loadData()
  
-W = testData[0,:,:]
+W = np.random.rand(784,1)
 W = np.reshape(W, (1,np.product(W.shape)))
 b = np.ones(np.shape(W))
 
-#MSE(W,1,testData,testTarget,0.1)
+
+crossEntropyLoss(W,b,trainData, trainTarget, 0)
+#MSE(W,b,testData,testTarget,0.1)
 #mse_gradient_weights, mse_gradient_biases = gradMSE(W,1,testData,testTarget,0.1)
 
-grad_descent(W, b, validData, validTarget, 0.005, 5000, {0.001,0.1,0.5}, 0.000001) 
+#grad_descent(W, b, validData, validTarget, 0.005, 5000, {0.001,0.1,0.5}, 0.000001) 
 
 #plt.scatter(np.matmul(np.transpose(W),testData)) + b, testTarget)
 #plt.show()
