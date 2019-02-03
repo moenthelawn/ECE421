@@ -28,16 +28,6 @@ def MSE(W, b, x, y, reg):
     mse = (1/2) * np.mean(np.square(y_pred - y))
     return (mse + (reg/2) * np.matmul(W, np.transpose(W)))
 
-def meanSquareError_normalWeights(W,X,y): 
-    Total *= (1/(2*N)) 
-    Total += (reg/2) * np.matmul(W, np.transpose(W))
-    return Total 
-
-def meanSquareError(W,x,y): 
-
-    Total *= (1/(2*N)) 
-    Total += (reg/2) * np.matmul(W, np.transpose(W))
-    return Total[0][0]
 
 def meanSquareError_normalWeights(W,X,y): 
 
@@ -57,7 +47,6 @@ def gradMSE(W, b, x, y, reg):
     
    # mse_gradient_weights = np.zeros(np.shape(W)) #Matrix to hold the gradients wrt weights 
     #mse_gradient_biases = 0
-    N = len(y)
     mse_gradient_weights = np.random.normal(0,1,np.shape(W)) #Matrix to hold the gradients wrt weights 
     mse_gradient_biases = np.random.normal(0,1,np.shape(W))#Declare a random set of matrix values for the biases 
     
@@ -86,10 +75,10 @@ def accuracy(x,W,b,y):
     N =np.shape(y)[0]
     
     for i in range(N): 
-        y_hat = getSign(np.matmul(W,np.transpose(X_sliced)))
+        y_hat = getSign(np.matmul(W,np.transpose(x)))
         y_expected = y[i]   
 
-        if y_hat_sign == ylabel: 
+        if y_hat == y_expected: 
             accuracy += 1
     return 100*(accuracy/N)
 
@@ -202,6 +191,7 @@ def buildGraph(loss=None):
         train = optimizer.minimize(loss=error) #Adding the cross entropy error
         
         return W, b, X,y_predicted, Y, error, train, regParamater 
+    
 def trainTensorModel(epochs, inputData, outputLabels,typeError,batch_size): 
     # Initialize session
     W, b, X, y_predicted, Y,error,train, reg = buildGraph(typeError)
@@ -292,15 +282,15 @@ def figPlot(figureNumber,array, title,yLabel):
 #error_1,accuracy_training = grad_descent(W,1,trainData,trainTarget,0.0001,5000,0,1e-6)
 #error_2,accuracy_training = grad_descent(W,1,trainData,trainTarget,0.001,5000,0,1e-6)
 #error_3,accuracy_training = grad_descent(W,1,trainData,trainTarget,0.005,5000,0,1e-6)
-
+trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
 #figPlot(3,{"Training" : accuracy_training}, "Error" ,"Error") 
 #figPlot(4,{"LR = 0.0001" : error_1,"LR = 0.001" : error_2,"LR = 0.005" : error_3}, "Training Data Error With Varying Learning Rates" ,"Error") 
-error_train1, accuracy_train1 = trainTensorModel(700,trainData, trainTarget,"MSE",500, 0.95)
-error_train2, accuracy_train2 = trainTensorModel(700,trainData, trainTarget,"MSE",5000.999)
+error_train1, accuracy_train1 = trainTensorModel(7,trainData, trainTarget,"MSE",500)
+error_train2, accuracy_train2 = trainTensorModel(7,trainData, trainTarget,"MSE",500)
 #error_train3, accuracy_train3 = trainTensorModel(700,trainData, trainTarget,"MSE",500)
 
-figPlot(1,{"BS=100" : error_train1, "BS=700" : error_train2, "BS=1750" : error_train3},"Error With Varying Batch Size","Error") #Creating a function to map out all of the graphs 
-figPlot(2,{"BS=100" : accuracy_train1[0], "BS=700" : accuracy_train2[0], "BS=1750" : accuracy_train3[0]},"Accuracy With Varying Batch Size","Accuracy") #Creating a function to map out all of the graphs 
+figPlot(1,{"BS=100" : error_train1, "BS=700" : error_train2},"Error With Varying Batch Size","Error") #Creating a function to map out all of the graphs 
+figPlot(2,{"BS=100" : accuracy_train1[0], "BS=700" : accuracy_train2[0]},"Accuracy With Varying Batch Size","Accuracy") #Creating a function to map out all of the graphs 
 
 #gradCE(W,1,trainData, trainTarget, 0)
 #MSE(W,1,testData,testTarget,0.1)
