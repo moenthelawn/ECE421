@@ -23,7 +23,12 @@ def loadData():
     return trainData, validData, testData, trainTarget, validTarget, testTarget
 
 def MSE(W, b, x, y, reg):
+    X_flattened = x.reshape(x.shape[0], x.shape[1] * x.shape[2])
+    y_pred = np.matmul(X_flattened,W) + b
+    mse = np.sum(np.square(y_pred - y))/(2.0*x.shape[0])
+    return (mse + (reg/2.0)*(np.linalg.norm(W)**2))
 
+<<<<<<< HEAD
     y_pred = np.matmul(x,np.transpose(W)) + b
     mse = (1/2) * np.mean(np.square(y_pred - y))
     return (mse + (reg/2) * np.matmul(W, np.transpose(W)))
@@ -42,23 +47,60 @@ def meanSquareError_normalWeights(W,X,y):
     wlin = np.matmul(np.matmul(x_inverted,x_t),y)
     return wlin[:][1:],wlin[0][0]
     
+||||||| merged common ancestors
+    y_pred = np.matmul(x,np.transpose(W)) + b
+    mse = (1/2) * np.mean(np.square(y_pred - y))
+    return (mse + (reg/2) * np.matmul(W, np.transpose(W)))
+
+def meanSquareError_normalWeights(W,X,y): 
+    Total *= (1/(2*N)) 
+    Total += (reg/2) * np.matmul(W, np.transpose(W))
+    return Total 
+
+def meanSquareError(W,x,y): 
+
+    Total *= (1/(2*N)) 
+    Total += (reg/2) * np.matmul(W, np.transpose(W))
+    return Total[0][0]
+
+def meanSquareError_normalWeights(W,X,y): 
+
+    #This function returns the minimized weights for the mean square 
+    x = X.reshape(np.shape(X)[0],-1)
+    biases = np.ones((np.shape(y)))
+    
+    x = np.concatenate((biases,x),axis=1)
+    x_t = np.transpose(x)
+    
+    x_inverted = np.linalg.inv(np.matmul(x_t,x))
+    wlin = np.matmul(np.matmul(x_inverted,x_t),y)
+    return wlin[:][1:],wlin[0][0]
+    
+=======
+>>>>>>> eabe297f1a3452b19f88661e27abd24ed09fc9f7
 def gradMSE(W, b, x, y, reg):
+<<<<<<< HEAD
 
     
    # mse_gradient_weights = np.zeros(np.shape(W)) #Matrix to hold the gradients wrt weights 
     #mse_gradient_biases = 0
+||||||| merged common ancestors
+
+    
+   # mse_gradient_weights = np.zeros(np.shape(W)) #Matrix to hold the gradients wrt weights 
+    #mse_gradient_biases = 0
+    N = len(y)
+=======
+>>>>>>> eabe297f1a3452b19f88661e27abd24ed09fc9f7
     mse_gradient_weights = np.random.normal(0,1,np.shape(W)) #Matrix to hold the gradients wrt weights 
     mse_gradient_biases = np.random.normal(0,1,np.shape(W))#Declare a random set of matrix values for the biases 
-    
-        
-    y_pred = np.matmul(x,np.transpose(W)) + b
+    X_flattened = x.reshape(x.shape[0], x.shape[1] * x.shape[2])
+    y_pred = np.matmul(X_flattened,W) + b
     yinside = y_pred - y
-    n = len(yinside)
-    mse_gradient_weights = (1/n) * np.matmul(np.transpose(yinside),x) + (reg) * W
-    mse_gradient_biases = np.mean(yinside)
-    #mse_gradient_biases += reg * W
-    
+    mse_gradient_weights = np.matmul(np.transpose(X_flattened),yinside)/x.shape[0] + (reg)*(np.linalg.norm(W))
+    mse_gradient_biases = np.sum(yinside)/x.shape[0]  
     return mse_gradient_weights,mse_gradient_biases
+<<<<<<< HEAD
 def getSign(number): 
     #This function will return the sign of a number 
     if number >= 0: 
@@ -107,54 +149,104 @@ def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS
         error_history.append(mse[0][0]) 
         
     return error_history,accuracy_history
+||||||| merged common ancestors
+def getSign(number): 
+    #This function will return the sign of a number 
+    if number >= 0: 
+        return 1 
+    else: 
+        return 0
+
+    
+def accuracy(x,W,b,y): 
+
+
+    y_hat = np.matmul(W,np.transpose(x))
+    accuracy = 0 
+    N =np.shape(y)[0]
+    
+    for i in range(N): 
+        y_hat = getSign(np.matmul(W,np.transpose(X_sliced)))
+        y_expected = y[i]   
+
+        if y_hat_sign == ylabel: 
+            accuracy += 1
+    return 100*(accuracy/N)
+
+def grad_descent_NormalEquation(W,trainingData,trainingLabels):
+   W_t,b = meanSquareError_normalWeights(W,trainingData,trainingLabels)       
+   return np.transpose(W_t), b
+
+def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
+    #Added the ability to loop through and 
+
+    error_history = []
+    accuracy_history = []
+    
+    for i in range(iterations):
+        X_flattened = trainingData.reshape(np.shape(trainingData)[0],-1)
+        mse = MSE(W,b,X_flattened,trainingLabels,reg)
+        
+        if mse <= EPS: 
+            break 
+        mse_gradient_weights, mse_gradient_biases = gradMSE(W,b,X_flattened, trainingLabels,reg)
+        
+        W -= mse_gradient_weights*alpha 
+        b -= mse_gradient_biases*alpha
+        accuracy_current= accuracy(X_flattened,W,b,trainingLabels) 
+        accuracy_history.append(accuracy_current) 
+        error_history.append(mse[0][0]) 
+        
+    return error_history,accuracy_history
+=======
+>>>>>>> eabe297f1a3452b19f88661e27abd24ed09fc9f7
 
 def crossEntropyLoss(W, b, x, y, reg):
-    total = 0
-    N = len(y)
+    X_flattened = x.reshape(x.shape[0], x.shape[1] * x.shape[2])
+    XW_matrix = np.matmul(X_flattened,W)
+    y_pred = sigmoid(XW_matrix + b)
+    cross_entropy = np.sum((np.multiply(-1.0 * y,np.log(y_pred))) - np.multiply((1.0 - y),np.log(1.0-y_pred)))/x.shape[0]
+    total_loss = cross_entropy + (reg/2)*(np.linalg.norm(W)**2)
+    return total_loss
 
-    
-    for i in range(N):  
-        X_sliced = x[i,:,:]
-        X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
-        sigmoid_value = sigmoid(W, X_sliced, b)
-        total += (-1 * y[i] * np.log(sigmoid_value)) - ((1 - y[i])*(np.log(1 - sigmoid_value)))
-        total = total * (1/N)
-    
-    total += (reg/2) * np.matmul(W, np.transpose(W))
-    
-    print(total)
-    return total 
-    
-
-def sigmoid(W, x, b):
-    sigmoid_output = 0 
-    raised_term = np.matmul(W, np.transpose(x)) + b
-    exponential_term = np.exp(-raised_term) 
-    sigmoid_output = 1 / (1 + exponential_term)
-    
-    return sigmoid_output 
-def gradCE(W, b, x, y, reg):
+def gradCE(W, b, x, y, reg): 
     grad_ce_weights = 0 
     grad_ce_biases = 0
-    N = len(y)
-    #Note the gradient with respect to the weights is exactly the same as the 
-    #gradient wrt to W of the MSE. 
-    for i in range(N):  
-        X_sliced = x[i,:,:]
-        X_sliced = np.reshape(X_sliced, (1,np.product(X_sliced.shape)))
-        grad_ce_weights += np.dot((sigmoid_value - y[i]), X_sliced)
-        grad_ce_biases += sigmoid_value - y[i]
-        
-    grad_ce_weights*= 1/N
-    grad_ce_weights += reg * W 
-    grad_ce_biases *= 1/N
+    X_flattened = x.reshape(x.shape[0],x.shape[1] * x.shape[2])
+    XW_matrix = np.matmul(X_flattened,W)
+    y_pred = sigmoid(XW_matrix + b)
+    grad_ce_weights = np.matmul(np.transpose(X_flattened), y_pred-y)/x.shape[0] + (reg)*(np.linalg.norm(W))
+    grad_ce_biases =  np.mean((y_pred - y))
     return grad_ce_weights, grad_ce_biases  
-def sigmoid(W, x, b):
-    sigmoid_output = 0 
-    raised_term = np.matmul(W, np.transpose(x)) + b
-    exponential_term = np.exp(-raised_term) 
-    sigmoid_output = 1 / (1 + exponential_term)
-    return sigmoid_output
+    
+#Helper function to evaluate sigmoid across an entire array
+def sigmoid(z):
+    return 1.0 / (1.0 + np.exp(-1.0*z))
+
+def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS, lossType):
+    error_history = []
+    if lossType == "MSE": 
+        for i in range(iterations):
+            mse = MSE(W,b,trainingData,trainingLabels,reg)
+            error_history.append(mse) 
+            if mse <= EPS: 
+                break 
+            mse_gradient_weights, mse_gradient_biases = gradMSE(W,b,trainingData, trainingLabels,reg)
+            
+            W -= mse_gradient_weights*alpha 
+            b -= mse_gradient_biases*alpha
+    elif lossType =="CE":
+        for i in range(iterations): 
+            ce = crossEntropyLoss(W,b,trainingData,trainingLabels,reg)
+        
+            error_history.append(ce) 
+            if ce <= EPS: 
+                break 
+            ce_gradient_weights, ce_gradient_biases = gradCE(W,b,trainingData, trainingLabels,reg)
+            W -= ce_gradient_weights*alpha 
+            b -= ce_gradient_biases*alpha 
+       
+    return W,b
     
 def buildGraph(loss=None):
     #Initialize weight and bias tensors
@@ -249,34 +341,58 @@ def figPlot(figureNumber,array, title,yLabel):
     f.show()
     plt.savefig(str(figureNumber))
     
-        
-
-#def crossEntropyLoss(W, b, x, y, reg):
-#Your implementation
     
-#def gradCE(W, b, x, y, reg):
-#Your implementation
-
-#def crossEntropyLoss(W, b, x, y, reg):
-#Your implementation
     
-#def gradCE(W, b, x, y, reg):
-#Your implementation
+#============================Helper functions for Part 1 and 2===========================================
+def meanSquareError_normalWeights(W,X,y): 
+    Total *= (1/(2*N)) 
+    Total += (reg/2) * np.matmul(W, np.transpose(W))
+    return Total 
 
-# =============================================================================
-# def crossEntropyLoss(W, b, x, y, reg):
-#     # Your implementation here
-# 
-# def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
-    #Your Implementaiton here 
-# def gradCE(W, b, x, y, reg):
-#     # Your implementation here
-# 
-# def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
-#     # Your implementation here
-# 
-# def buildGraph(beta1=None, beta2=None, epsilon=None, lossType=None, learning_rate=None):
-#     # Your implementation here
+def meanSquareError(W,x,y): 
+
+    Total *= (1/(2*N)) 
+    Total += (reg/2) * np.matmul(W, np.transpose(W))
+    return Total[0][0]
+
+def meanSquareError_normalWeights(W,X,y): 
+
+    #This function returns the minimized weights for the mean square 
+    x = X.reshape(np.shape(X)[0],-1)
+    biases = np.ones((np.shape(y)))
+    
+    x = np.concatenate((biases,x),axis=1)
+    x_t = np.transpose(x)
+    
+    x_inverted = np.linalg.inv(np.matmul(x_t,x))
+    wlin = np.matmul(np.matmul(x_inverted,x_t),y)
+    return wlin[:][1:],wlin[0][0]
+
+def getSign(number): 
+    #This function will return the sign of a number 
+    if number >= 0: 
+        return 1 
+    else: 
+        return 0
+
+    
+def accuracy(x,W,b,y): 
+    y_hat = np.matmul(W,np.transpose(x))
+    accuracy = 0 
+    N =np.shape(y)[0]
+    
+    for i in range(N): 
+        y_hat = getSign(np.matmul(W,np.transpose(X_sliced)))
+        y_expected = y[i]   
+
+        if y_hat_sign == ylabel: 
+            accuracy += 1
+    return 100*(accuracy/N)
+
+def grad_descent_NormalEquation(W,trainingData,trainingLabels):
+   W_t,b = meanSquareError_normalWeights(W,trainingData,trainingLabels)       
+   return np.transpose(W_t), b
+
 # =============================================================================
     
 #error_1,accuracy_training = grad_descent(W,1,trainData,trainTarget,0.0001,5000,0,1e-6)
