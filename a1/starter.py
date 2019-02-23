@@ -28,70 +28,9 @@ def MSE(W, b, x, y, reg):
     mse = np.sum(np.square(y_pred - y))/(2.0*x.shape[0])
     return (mse + (reg/2.0)*(np.linalg.norm(W)**2))
 
-<<<<<<< HEAD
-    y_pred = np.matmul(x,np.transpose(W)) + b
-    mse = (1/2) * np.mean(np.square(y_pred - y))
-    return (mse + (reg/2) * np.matmul(W, np.transpose(W)))
 
-
-def meanSquareError_normalWeights(W,X,y): 
-
-    #This function returns the minimized weights for the mean square 
-    x = X.reshape(np.shape(X)[0],-1)
-    biases = np.ones((np.shape(y)))
-    
-    x = np.concatenate((biases,x),axis=1)
-    x_t = np.transpose(x)
-    
-    x_inverted = np.linalg.inv(np.matmul(x_t,x))
-    wlin = np.matmul(np.matmul(x_inverted,x_t),y)
-    return wlin[:][1:],wlin[0][0]
-    
-||||||| merged common ancestors
-    y_pred = np.matmul(x,np.transpose(W)) + b
-    mse = (1/2) * np.mean(np.square(y_pred - y))
-    return (mse + (reg/2) * np.matmul(W, np.transpose(W)))
-
-def meanSquareError_normalWeights(W,X,y): 
-    Total *= (1/(2*N)) 
-    Total += (reg/2) * np.matmul(W, np.transpose(W))
-    return Total 
-
-def meanSquareError(W,x,y): 
-
-    Total *= (1/(2*N)) 
-    Total += (reg/2) * np.matmul(W, np.transpose(W))
-    return Total[0][0]
-
-def meanSquareError_normalWeights(W,X,y): 
-
-    #This function returns the minimized weights for the mean square 
-    x = X.reshape(np.shape(X)[0],-1)
-    biases = np.ones((np.shape(y)))
-    
-    x = np.concatenate((biases,x),axis=1)
-    x_t = np.transpose(x)
-    
-    x_inverted = np.linalg.inv(np.matmul(x_t,x))
-    wlin = np.matmul(np.matmul(x_inverted,x_t),y)
-    return wlin[:][1:],wlin[0][0]
-    
-=======
->>>>>>> eabe297f1a3452b19f88661e27abd24ed09fc9f7
 def gradMSE(W, b, x, y, reg):
-<<<<<<< HEAD
-
-    
-   # mse_gradient_weights = np.zeros(np.shape(W)) #Matrix to hold the gradients wrt weights 
-    #mse_gradient_biases = 0
-||||||| merged common ancestors
-
-    
-   # mse_gradient_weights = np.zeros(np.shape(W)) #Matrix to hold the gradients wrt weights 
-    #mse_gradient_biases = 0
     N = len(y)
-=======
->>>>>>> eabe297f1a3452b19f88661e27abd24ed09fc9f7
     mse_gradient_weights = np.random.normal(0,1,np.shape(W)) #Matrix to hold the gradients wrt weights 
     mse_gradient_biases = np.random.normal(0,1,np.shape(W))#Declare a random set of matrix values for the biases 
     X_flattened = x.reshape(x.shape[0], x.shape[1] * x.shape[2])
@@ -100,106 +39,6 @@ def gradMSE(W, b, x, y, reg):
     mse_gradient_weights = np.matmul(np.transpose(X_flattened),yinside)/x.shape[0] + (reg)*(np.linalg.norm(W))
     mse_gradient_biases = np.sum(yinside)/x.shape[0]  
     return mse_gradient_weights,mse_gradient_biases
-<<<<<<< HEAD
-def getSign(number): 
-    #This function will return the sign of a number 
-    if number >= 0: 
-        return 1 
-    else: 
-        return 0
-
-    
-def accuracy(x,W,b,y): 
-
-
-    y_hat = np.matmul(W,np.transpose(x))
-    accuracy = 0 
-    N =np.shape(y)[0]
-    
-    for i in range(N): 
-        y_hat = getSign(np.matmul(W,np.transpose(x)))
-        y_expected = y[i]   
-
-        if y_hat == y_expected: 
-            accuracy += 1
-    return 100*(accuracy/N)
-
-def grad_descent_NormalEquation(W,trainingData,trainingLabels):
-   W_t,b = meanSquareError_normalWeights(W,trainingData,trainingLabels)       
-   return np.transpose(W_t), b
-
-def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
-    #Added the ability to loop through and 
-
-    error_history = []
-    accuracy_history = []
-    
-    for i in range(iterations):
-        X_flattened = trainingData.reshape(np.shape(trainingData)[0],-1)
-        mse = MSE(W,b,X_flattened,trainingLabels,reg)
-        
-        if mse <= EPS: 
-            break 
-        mse_gradient_weights, mse_gradient_biases = gradMSE(W,b,X_flattened, trainingLabels,reg)
-        
-        W -= mse_gradient_weights*alpha 
-        b -= mse_gradient_biases*alpha
-        accuracy_current= accuracy(X_flattened,W,b,trainingLabels) 
-        accuracy_history.append(accuracy_current) 
-        error_history.append(mse[0][0]) 
-        
-    return error_history,accuracy_history
-||||||| merged common ancestors
-def getSign(number): 
-    #This function will return the sign of a number 
-    if number >= 0: 
-        return 1 
-    else: 
-        return 0
-
-    
-def accuracy(x,W,b,y): 
-
-
-    y_hat = np.matmul(W,np.transpose(x))
-    accuracy = 0 
-    N =np.shape(y)[0]
-    
-    for i in range(N): 
-        y_hat = getSign(np.matmul(W,np.transpose(X_sliced)))
-        y_expected = y[i]   
-
-        if y_hat_sign == ylabel: 
-            accuracy += 1
-    return 100*(accuracy/N)
-
-def grad_descent_NormalEquation(W,trainingData,trainingLabels):
-   W_t,b = meanSquareError_normalWeights(W,trainingData,trainingLabels)       
-   return np.transpose(W_t), b
-
-def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS):
-    #Added the ability to loop through and 
-
-    error_history = []
-    accuracy_history = []
-    
-    for i in range(iterations):
-        X_flattened = trainingData.reshape(np.shape(trainingData)[0],-1)
-        mse = MSE(W,b,X_flattened,trainingLabels,reg)
-        
-        if mse <= EPS: 
-            break 
-        mse_gradient_weights, mse_gradient_biases = gradMSE(W,b,X_flattened, trainingLabels,reg)
-        
-        W -= mse_gradient_weights*alpha 
-        b -= mse_gradient_biases*alpha
-        accuracy_current= accuracy(X_flattened,W,b,trainingLabels) 
-        accuracy_history.append(accuracy_current) 
-        error_history.append(mse[0][0]) 
-        
-    return error_history,accuracy_history
-=======
->>>>>>> eabe297f1a3452b19f88661e27abd24ed09fc9f7
 
 def crossEntropyLoss(W, b, x, y, reg):
     X_flattened = x.reshape(x.shape[0], x.shape[1] * x.shape[2])
@@ -245,7 +84,7 @@ def grad_descent(W, b, trainingData, trainingLabels, alpha, iterations, reg, EPS
             ce_gradient_weights, ce_gradient_biases = gradCE(W,b,trainingData, trainingLabels,reg)
             W -= ce_gradient_weights*alpha 
             b -= ce_gradient_biases*alpha 
-       
+      
     return W,b
     
 def buildGraph(loss=None):
