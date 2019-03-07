@@ -62,8 +62,8 @@ def CE(target, prediction):
     
     # TODO
 
-def gradCE(target, prediction):
-    return np.mean(np.sum((prediction - target)))
+def gradCE(target,prediction):
+    return -1.0*(target/prediction)
     # TODO
 
 trainData,trainTarget, 
